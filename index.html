@@ -1,0 +1,1798 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Professional audio on the Web, what now?</title>
+    <style>
+      @font-face {
+        font-family: "Fira Code";
+        src: url("FiraCode-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Inter";
+        src: url("Inter/Inter-Variable.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Inter";
+        src: url("Inter/Inter-Italic-Variable.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: italic;
+      }
+
+      /* Palette values follow Firefox Nova tokens in ux-ai-hub/tokens.css. */
+      :root {
+        --canvas: #f7f6fb;
+        --surface: #fcfbff;
+        --ink: #180e30;
+        --muted-ink: rgba(24, 14, 48, 0.7);
+        --accent: #764edd;
+        --accent-dark: #3e2976;
+        --accent-warm: #ff9565;
+        --line: rgba(24, 14, 48, 0.16);
+        --shadow: 0 0.35em 1.1em rgba(89, 57, 168, 0.12);
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--canvas);
+        font-family: Inter, system-ui, sans-serif;
+      }
+
+      code.remark-inline-code,
+      pre code.remark-code,
+      .remark-code,
+      .remark-inline-code {
+        font-family: "Fira Code", monospace;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 700;
+        letter-spacing: -0.035em;
+      }
+
+      a,
+      a:visited {
+        color: var(--accent);
+      }
+
+      .remark-slide-content {
+        box-sizing: border-box;
+        padding: 0;
+        background:
+          linear-gradient(180deg, var(--accent), var(--accent-warm)) left top / 8px 100% no-repeat,
+          var(--canvas);
+        color: var(--ink);
+        font-size: 28px;
+      }
+
+      /* The accent belongs to the full slide canvas, so it reaches every edge. */
+      .remark-slide-content.title-slide {
+        background:
+          linear-gradient(180deg, var(--accent), var(--accent-warm)) left top / 8px 100% no-repeat,
+          var(--canvas);
+      }
+
+      .title-layout,
+      .content-layout,
+      .section-layout {
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        padding: 1.55em 2em 1.35em 2.3em;
+      }
+
+      .title-layout,
+      .content-layout {
+        justify-content: space-between;
+      }
+
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 0.55em;
+        align-self: flex-end;
+      }
+
+      .brand-lockup img:first-child {
+        display: block;
+        width: 1.65em;
+        height: 1.65em;
+      }
+
+      .brand-lockup img:last-child {
+        display: block;
+        width: 5.2em;
+        height: auto;
+      }
+
+      .title-copy {
+        max-width: 23em;
+        margin-block: auto;
+        padding-block: 0.75em;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.55em;
+        color: var(--accent);
+        font-size: 0.58em;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .title-copy h1 {
+        margin: 0;
+        font-size: 2.45em;
+        line-height: 1.08;
+      }
+
+      .speaker {
+        margin: 1.05em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.9em;
+        font-weight: 500;
+      }
+
+      .event-details {
+        max-width: 36em;
+        margin: 0;
+        padding-block-start: 0.65em;
+        color: var(--muted-ink);
+        font-size: 0.57em;
+      }
+
+      .content-layout {
+        padding: 1.35em 1.8em;
+      }
+
+      .slide-heading {
+        margin: 0;
+        font-size: 1.55em;
+        line-height: 1.12;
+      }
+
+      .slide-subtitle {
+        max-width: 34em;
+        margin: 0.45em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.65em;
+        line-height: 1.4;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.65em;
+        margin-block: 0.8em 0.55em;
+      }
+
+      .capability-card {
+        min-height: 5.2em;
+        padding: 0.75em;
+        border: 1px solid rgba(24, 14, 48, 0.08);
+        border-radius: 0.5em;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .card-index {
+        display: grid;
+        width: 1.25em;
+        height: 1.25em;
+        place-items: center;
+        margin-bottom: 0.55em;
+        border-radius: 50%;
+        background: #eaddff;
+        color: var(--accent-dark);
+        font-size: 0.68em;
+        font-weight: 700;
+      }
+
+      .capability-card h3 {
+        margin: 0 0 0.28em;
+        font-size: 0.85em;
+      }
+
+      .capability-card p {
+        margin: 0;
+        color: var(--muted-ink);
+        font-size: 0.56em;
+        line-height: 1.4;
+      }
+
+      .slide-footnote {
+        margin: 0;
+        color: var(--muted-ink);
+        font-size: 0.48em;
+      }
+
+      .section-slide {
+        background: var(--accent-dark);
+        color: var(--surface);
+      }
+
+      .section-layout {
+        justify-content: space-between;
+        padding: 1.6em 2em;
+        background:
+          radial-gradient(ellipse at 92% 12%, rgba(255, 149, 101, 0.22), transparent 35%),
+          var(--accent-dark);
+        color: var(--surface);
+      }
+
+      .section-number {
+        color: #d4c1ff;
+        font-size: 0.62em;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .section-layout h2 {
+        max-width: 12em;
+        margin: auto 0;
+        font-size: 2.35em;
+        line-height: 1.05;
+      }
+
+      .section-note {
+        margin: 0;
+        color: rgba(252, 251, 255, 0.76);
+        font-size: 0.62em;
+      }
+
+      .signal-path {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
+        gap: 0.42em;
+        margin-block: auto;
+        padding-block: 0.9em;
+      }
+
+      /* Only the boxes move: taken out of the flow and centred on the slide, the header stays put. */
+      .remark-slide-content.middle-boxes .signal-path {
+        position: absolute;
+        top: 50%;
+        right: 1.8em;
+        left: 1.8em;
+        margin-block: 0;
+        transform: translateY(-50%);
+      }
+
+      .signal-step {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 3.7em;
+        padding: 0.55em;
+        border: 1px solid rgba(24, 14, 48, 0.08);
+        border-radius: 0.42em;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .signal-step:not(:last-child)::after {
+        position: absolute;
+        top: 50%;
+        right: -0.47em;
+        z-index: 1;
+        width: 0.5em;
+        height: 2px;
+        background: var(--accent);
+        content: "";
+      }
+
+      .signal-step span {
+        margin-bottom: 0.4em;
+        color: var(--accent);
+        font-size: 0.48em;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .signal-step strong {
+        font-size: 0.67em;
+        line-height: 1.2;
+      }
+
+      .table-wrap {
+        overflow: hidden;
+        margin-block: auto;
+        border: 1px solid var(--line);
+        border-radius: 0.4em;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.58em;
+        line-height: 1.35;
+      }
+
+      th,
+      td {
+        padding: 0.72em 0.8em;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      thead {
+        background: #eaddff;
+        color: var(--accent-dark);
+        font-size: 0.9em;
+      }
+
+      tbody tr + tr {
+        border-top: 1px solid rgba(24, 14, 48, 0.09);
+      }
+
+      tbody td:first-child {
+        font-weight: 700;
+      }
+
+      .small { font-size: 24px; }
+      .smaller { font-size: 22px; }
+      .smallest { font-size: 17px; }
+
+      /* Markdown slides: most of the deck, so it stays easy to edit. */
+      .remark-slide-content.prose,
+      .remark-slide-content.statement,
+      .remark-slide-content.quote,
+      .remark-slide-content.photo,
+      .remark-slide-content.code {
+        padding: 1.35em 1.8em;
+      }
+
+      blockquote  {
+        border-left: 0.33em solid var(--line);
+        padding-left: 0.66em;
+        font-style: italic;
+      }
+
+      .prose h2,
+      .photo h2,
+      .code h2 {
+        margin: 0 0 0.55em;
+        font-size: 1.45em;
+        line-height: 1.12;
+      }
+
+      .prose .eyebrow,
+      .code .eyebrow,
+      .photo .eyebrow {
+        display: block;
+      }
+
+      .prose p,
+      .prose li,
+      .photo p {
+        max-width: 31em;
+        font-size: 0.8em;
+        line-height: 1.42;
+      }
+
+      .prose ul {
+        margin: 0;
+        padding-left: 1.1em;
+      }
+
+      .prose li + li {
+        margin-top: 0.3em;
+      }
+
+      /* Blank lines between items make a list loose: its items get <p>, which would shrink them again. */
+      .prose li > p {
+        margin: 0;
+        font-size: inherit;
+        line-height: inherit;
+      }
+
+      .prose li::marker {
+        color: var(--accent);
+      }
+
+      .prose strong,
+      .statement strong {
+        color: var(--accent-dark);
+      }
+
+      /* Bigger: heading and list grow to fill the slide. Paragraphs keep their size. */
+      .remark-slide-content.bigger h2 {
+        font-size: 1.75em;
+      }
+
+      .remark-slide-content.bigger li {
+        font-size: 1.45em;
+      }
+
+      .remark-slide-content.bigger li + li {
+        margin-top: 0.6em;
+      }
+
+      /* Big: halfway between normal and bigger. */
+      .remark-slide-content.big h2 {
+        font-size: 1.6em;
+      }
+
+      .remark-slide-content.big li {
+        font-size: 1.12em;
+      }
+
+      .remark-slide-content.big li + li {
+        margin-top: 0.45em;
+      }
+
+      .muted {
+        color: var(--muted-ink);
+      }
+
+      /* Percentages, not em: footnotes inherit a smaller font size. 5.55% is the slide's 1.8em padding. */
+      .footnote {
+        position: absolute;
+        right: 14%;
+        bottom: 4.2%;
+        left: 5.55%;
+        color: var(--muted-ink);
+        font-size: 0.48em;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2em;
+      }
+
+      .two-col h3 {
+        margin: 0 0 0.35em;
+        color: var(--accent);
+        font-size: 0.7em;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .two-col li,
+      .two-col p {
+        font-size: 0.72em;
+      }
+
+      .remark-slide-content.statement {
+        vertical-align: middle;
+      }
+
+      .statement h2 {
+        max-width: 17em;
+        margin: 0;
+        font-size: 1.75em;
+        line-height: 1.15;
+      }
+
+      .statement p {
+        max-width: 28em;
+        margin: 0.9em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.8em;
+        line-height: 1.4;
+      }
+
+      .remark-slide-content.quote {
+        vertical-align: middle;
+        background:
+          linear-gradient(180deg, var(--accent), var(--accent-warm)) left top / 8px 100% no-repeat,
+          var(--canvas);
+      }
+
+      .quote blockquote {
+        margin: 0;
+        font-size: 1.15em;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+
+      .quote .attribution {
+        display: block;
+        margin: 1em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.6em;
+      }
+
+      .photo .photo-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 1.1em;
+        align-items: center;
+      }
+
+      .photo img {
+        display: block;
+        width: 100%;
+        border-radius: 0.3em;
+        box-shadow: var(--shadow);
+      }
+
+      .code pre {
+        margin: 0.4em 0 0;
+      }
+
+      .code .remark-code {
+        padding: 0.8em !important;
+        border-radius: 0.4em;
+        background: var(--surface) !important;
+        box-shadow: var(--shadow);
+        font-size: 0.56em;
+        line-height: 1.45;
+      }
+
+      .code p {
+        margin: 0.6em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.6em;
+        line-height: 1.4;
+      }
+
+      .chips {
+        display: block;
+      }
+
+      .chips ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35em;
+        margin: 0.2em 0 0.7em;
+        padding: 0;
+        list-style: none;
+      }
+
+      .chips li {
+        margin: 0 !important;
+        padding: 0.2em 0.6em;
+        border-radius: 1em;
+        background: #eaddff;
+        color: var(--accent-dark);
+        font-size: 0.6em !important;
+        font-weight: 600;
+      }
+
+      .timeline td:first-child {
+        width: 5.5em;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Absolute, not height: 100%: Firefox doesn't resolve that inside remark's table cell, so the chart was 0px tall. */
+      .chart-layout {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: 1.2em 1.5em 1em;
+      }
+
+      .chart-layout header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1em;
+      }
+
+      .chart {
+        flex: 1;
+        min-height: 0;
+        margin-top: 0.4em;
+      }
+
+      .chart-steps {
+        display: flex;
+        gap: 0.5em;
+      }
+
+      .chart-step {
+        padding: 0.3em 0.8em;
+        border: 1px solid var(--accent);
+        border-radius: 0.4em;
+        background: var(--surface);
+        color: var(--accent-dark);
+        font: inherit;
+        font-size: 0.55em;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .chart-layout .slide-footnote,
+      .content-layout .slide-footnote,
+      .footnote {
+        padding-right: 3.5em;
+      }
+
+      .ml-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 1em;
+        align-items: center;
+      }
+
+      .ml-grid li {
+        font-size: 0.72em;
+      }
+
+      .figure img {
+        display: block;
+        width: 100%;
+        border-radius: 0.3em;
+        box-shadow: var(--shadow);
+      }
+
+      .figure p {
+        margin: 0.5em 0 0;
+        color: var(--muted-ink);
+        font-size: 0.48em;
+        line-height: 1.35;
+      }
+
+      .card-grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card-grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      /* Fake IRC transcript: an irssi-style terminal. Each "--" step adds a line. */
+      .remark-slide-content.irc {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 0 0 0 8px;
+        background:
+          linear-gradient(180deg, var(--accent), var(--accent-warm)) left top / 8px 100% no-repeat,
+          #120d1f;
+        color: #e8e3f5;
+        font-family: "Fira Code", monospace;
+        font-size: 22px;
+      }
+
+      .irc-titlebar {
+        position: relative;
+        padding: 0.7em 0;
+        background: #241c3a;
+        color: #9d94b8;
+        font-size: 0.7em;
+        text-align: center;
+      }
+
+      .irc-titlebar i {
+        position: absolute;
+        top: 50%;
+        left: 1.1em;
+        width: 0.75em;
+        height: 0.75em;
+        margin-top: -0.375em;
+        border-radius: 50%;
+        background: #ff5f57;
+      }
+
+      .irc-titlebar i:nth-child(2) {
+        left: 2.6em;
+        background: #febc2e;
+      }
+
+      .irc-titlebar i:nth-child(3) {
+        left: 4.1em;
+        background: #28c840;
+      }
+
+      .irc-line,
+      .irc-system {
+        margin-top: 0.4em;
+        padding: 0 1.2em;
+        line-height: 1.45;
+      }
+
+      .irc-line {
+        display: grid;
+        grid-template-columns: 11ch minmax(0, 1fr);
+        column-gap: 1ch;
+      }
+
+      .irc-system {
+        color: #7d7599;
+      }
+
+      .irc-system::before {
+        content: "*** ";
+      }
+
+      .irc-nick {
+        color: #ffb38a;
+        text-align: right;
+      }
+
+      .irc-nick.me {
+        color: #b9a3ff;
+      }
+
+      .irc-nick::before {
+        content: "<";
+      }
+
+      .irc-nick::after {
+        content: ">";
+      }
+
+      .irc-footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 8px;
+      }
+
+      .irc-statusbar {
+        padding: 0.3em 1.2em;
+        background: #d4c1ff;
+        color: #180e30;
+        font-size: 0.7em;
+      }
+
+      /* 0.84em is the status bar's 1.2em gutter, at its 0.7em font size. */
+      .irc-input {
+        padding: 0.3em 0.84em;
+        font-size: 1em;
+        line-height: 1.5;
+      }
+
+      /* Reserves the input row on the first steps; the prompt overlays it on the last one. */
+      .irc-spacer {
+        visibility: hidden;
+      }
+
+      .irc-prompt {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 8px;
+      }
+
+      .irc-cursor {
+        display: inline-block;
+        width: 0.6em;
+        height: 1.1em;
+        vertical-align: text-bottom;
+        background: #e8e3f5;
+        animation: irc-blink 1s steps(1) infinite;
+      }
+
+      @keyframes irc-blink {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: title-slide
+
+<div class="title-layout">
+  <div class="brand-lockup">
+    <img src="assets/firefox-logo.png" alt="" />
+    <img src="assets/firefox-wordmark.svg" alt="Firefox" />
+  </div>
+  <div class="title-copy">
+    <h1>Professional audio on the Web, what now?</h1>
+    <p class="speaker">Paul Adenot, Mozilla Corporation</p>
+  </div>
+  <p class="event-details">IEEE International Symposium on the Internet of Sounds
+  <p class="event-details">29 October 2026</p>
+  <p class="event-details">Cannes</p>
+</div>
+
+---
+
+class: quote
+
+# Internet of sound?
+
+---
+
+class: quote
+
+## <https://internetofsounds2026.ieee-internetofsounds.org/call-papers>
+
+---
+
+class: irc
+
+<div class="irc-titlebar"><i></i><i></i><i></i><span>irssi</span></div>
+
+<div class="irc-footer">
+  <div class="irc-statusbar">[padenot(+i)] [#media]</div>
+  <div class="irc-input irc-spacer">&nbsp;</div>
+</div>
+
+<div class="irc-system">Time: 2014 (maybe?)</div>
+
+--
+
+<div class="irc-system">Location: irc.mozilla.org:6667 #media</div>
+
+--
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">Hi did you know you support stereo in WebRTC?</span></div>
+
+--
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">is it intentional?</span></div>
+
+--
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">we rely on it to treat PTSD remotely, no other browser support this, it would be great it if didn't break</span></div>
+
+--
+
+<div class="irc-input irc-prompt"><span class="irc-typed">wtf</span><span class="irc-cursor"></span></div>
+
+---
+
+class: irc, irc-typing
+
+<div class="irc-titlebar"><i></i><i></i><i></i><span>irssi</span></div>
+
+<div class="irc-footer">
+  <div class="irc-statusbar">[padenot(+i)] [#media]</div>
+  <div class="irc-input"><span class="irc-typed">wtf</span><span class="irc-cursor"></span></div>
+</div>
+
+<div class="irc-system">Time: 2014 (maybe?)</div>
+
+<div class="irc-system">Location: irc.mozilla.org:6667 #media</div>
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">Hi did you know you support stereo in WebRTC?</span></div>
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">is it intentional?</span></div>
+
+<div class="irc-line"><span class="irc-nick">person</span><span class="irc-msg">we rely on it to treat PTSD remotely, no other browser support this, it would be great it if didn't break</span></div>
+
+---
+
+class: prose, bigger
+
+## Three lessons out of this
+
+--
+
+- You don't know who your users are, you never will, you can try, but **don't assume** ;
+- Ease of access (a simple **URL**, a **web browser**, **any** device) is very powerful ;
+- Standards, things not breaking are not _nice to have_, they are **foundational** and **enabling**.
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">01 - Where we come from</span>
+  <h2>Fifteen years of audio programming on the Web</h2>
+</div>
+
+---
+
+class: quote
+
+# Who is this guy?
+
+---
+
+class: prose
+
+.eyebrow[2010–2011]
+
+## Two ideas of what audio on the Web should be
+
+.two-col[
+.col[
+### Mozilla: Audio Data API
+
+- Humphrey &amp; al., Firefox 4 (2011)
+- Raw samples, in and out of JavaScript
+- Low level
+- You write the DSP
+]
+.col[
+### Google: Web Audio API
+
+- Chris Rogers, Chrome 10 (2011)
+- A graph of native processing nodes
+- High level
+- You wire the DSP
+]
+]
+
+Then a third: the MediaStream Processing API (Robert O'Callahan, Mozilla, 2011), DSP in workers.
+
+---
+
+class: quote
+
+> JavaScript is very much slower than heavily optimized C++ code and is not able to take advantage of SSE optimizations and multi-threading [...]. Optimized native code can be on the order of twenty times faster for processing FFTs as compared with JavaScript.
+
+.attribution[Web Audio API, W3C First Public Working Draft, 15 December 2011, §15.4. Ed. Chris Rogers, Google.]
+
+---
+
+class: statement
+
+## So we standardized a graph of unit generators, implemented natively, because JavaScript was slow.
+
+---
+
+class: statement
+
+## Then worked our way down tirelessly from there
+
+---
+
+<div class="content-layout">
+  <header>
+    <h2 class="slide-heading">Fixing problems, one at a time, with standards</h2>
+  </header>
+  <div class="table-wrap timeline" style="margin-top: 0.5em">
+    <table>
+      <tbody>
+        <tr><td>2013</td><td><strong>Web Audio API</strong>: all browsers supported.</td></tr>
+        <tr><td>2013</td><td><strong>WebRTC interop</strong>: Firefox and Chrome can call each other.</td></tr>
+        <tr><td>2013</td><td><strong>asm.js</strong>: JavaScript that compiles from native, runs fast. </td></tr>
+        <tr><td>2017</td><td><strong>WebAssembly</strong> in every major browser. <strong>SharedArrayBuffer</strong> ships.</td></tr>
+        <tr><td>Jan 2018</td><td><strong>Spectre</strong>: SharedArrayBuffer turned off everywhere overnight.</td></tr>
+        <tr><td>2018–21</td><td><strong>AudioWorklet</strong>: Chrome, Firefox, Safari.</td></tr>
+        <tr><td>2020–21</td><td><strong>SharedArrayBuffer</strong> is back, behind cross-origin isolation.</td></tr>
+        <tr><td>2021</td><td><strong>Wasm SIMD</strong>. Web Audio 1.0 becomes a W3C Recommendation.</td></tr>
+        <tr><td>2023–25</td><td><strong>WebCodecs</strong> and <strong>WebGPU</strong> in all engines.</td></tr>
+        <tr><td>Now</td><td><strong>Document-Isolation-Policy</strong>, <strong>WebNN</strong>, <strong>Wasm ESM</strong> integration and <strong>components</strong>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">02 - Definitions</span>
+  <h2>What does "pro audio" mean anyway?</h2>
+  <p>What/who does the title of the talk even includes</p>
+</div>
+
+---
+
+class: quote
+
+# That's the thing, it include most people
+
+---
+
+class: quote
+
+# Creator of systems<br>Users<span style="display: inline-block; width:0.95em;"></span>of systems
+
+---
+
+class: quote
+
+## Demos are cool <small style="font-size: 30px; font-weight: 300;">...the Web has never been short of that</small>
+
+## Professional quality software is better
+
+
+---
+
+class: prose
+
+## Who are "the professionals"?
+
+.chips[
+- Musicians
+- Producers
+- Mixing & mastering engineers
+- Sound designers
+- Live sound
+- Composers for film & games
+]
+
+--
+
+.chips[
+- Broadcast engineers
+- Radio & TV producers
+- Podcasters
+- Post-production
+- Archivists
+- Restorers
+- Forensic audio analysts
+]
+
+--
+
+.chips[
+- Acousticians
+- MIR researchers
+- Bioacousticians
+- Speech scientists
+- Teachers & students
+- Sonification designers
+]
+
+--
+
+.chips[
+- Audiologists
+- Therapists
+- Telecom engineers
+- Accessibility (sound *is* the interface)
+]
+
+--
+
+.chips[
+- Anyone on a call
+]
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">03 - Reputation</span>
+  <h2>The Web has a bad rep</h2>
+</div>
+
+---
+
+class: prose, bigger
+
+## "The Web is..."
+
+- slow
+
+--
+
+- garbage collected, so it glitches
+
+--
+
+- high latency, not real time
+
+--
+
+- missing features I need
+
+--
+
+- not for mobile
+
+--
+
+- for cute demos, not for serious work
+
+---
+
+class: prose
+
+## How big is the Web slowdown?
+
+The part of your code that you write runs as WebAssembly. Measured against native:
+
+- **1.45–1.55×** on average, **2.1–2.5×** at worst, on SPEC CPU (Jangda et al., 2019)
+- The 2011 spec said native was **20×** faster for FFTs
+
+Let's take the worst reasonable case: **everything is twice as slow**.
+
+.footnote[Jangda, Powers, Berger, Guha. "Not So Fast: Analyzing the Performance of WebAssembly vs. Native Code", USENIX ATC 2019. Firefox and Chrome, respectively.]
+
+---
+
+<div class="chart-layout">
+  <header>
+    <div>
+      <p class="eyebrow">Meanwhile, hardware</p>
+      <h2 class="slide-heading">Laptop CPUs, one thread</h2>
+    </div>
+    <div class="chart-steps">
+      <button class="chart-step" data-step="halved">÷ 2</button>
+      <button class="chart-step" data-step="apple">Apple Silicon</button>
+    </div>
+  </header>
+  <div class="chart" data-chart="laptops" role="img" aria-label="Single-thread PassMark scores of 1,134 laptop CPUs from 2012 to 2026, with the yearly median rising from about 975 to 3,830."></div>
+</div>
+
+---
+
+class: quote
+
+## Wasm on a good laptop of 2026 ≈ <br>Native on a good laptop in 2022
+
+and we wrote good software in 2022 iirc
+
+---
+
+class: quote
+
+## And remember: the browser is native software
+
+- The only tax you pay is WASM, for safety, but compile from native code
+- Lock free real-time programming idioms are the same
+- Network speed, latencies are the same
+- Audio latencies are the same
+- Disk IO latencies are the same
+- Codecs are better and ready to use
+
+---
+
+class: prose
+
+## What's still missing, honestly
+
+- Lossless, unprocessed audio in and out of WebRTC, end to end
+
+--
+
+- Multichannel devices: channel mapping and selection, consistently across browsers
+
+--
+
+- Device APIs (MIDI, USB, Serial, HID): not uniformly available
+
+--
+
+- Long-running background work on mobile
+
+--
+
+- Large project files: storage exists, directory access isn't universal
+
+.footnote[See also: "Wasted Bandwidth: The Case for Lossless Audio in Networked Music Performance", Severi, this conference (MT 58).]
+
+---
+
+class: prose
+
+## Obligatory AI slide
+
+.ml-grid[
+.col[
+- **Wasm SIMD + threads**: neural denoisers in calls today (Jitsi, Krisp, Zoom), Neural Amp Sim, etc.
+- **WebGPU**: now in all browsers
+- **WebNN**: higher level, faster tensor computing with xPUs. Running in Firefox, as of this week
+- **Web Speech**: on-device real-time low-latency multinlingual hardware accelerated speech recognition
+]
+.figure[
+<img src="assets/webnn-firefox.avif" alt="A MacBook running a local Firefox build: webcam images restyled as The Starry Night by WebNN" />
+
+getUserMedia → WebNN style transfer, 100+ fps, Core ML, sandboxed and remoted. Local Firefox build (not shipped).
+]
+]
+
+.footnote[This conference: "Neural Inference of Realtime Audio in the Web: Porting Anira to WebAssembly", von Raumer & Schulz (MT 60).]
+
+---
+
+class: prose
+
+## Is the web ready for your research and products?
+
+--
+
+yeah don't worry about it
+
+- **Flexibility**: can we do everything we want? Mostly. The list of exceptions
+is short, known and top people are on it
+
+--
+
+- **Performance**: mostly yeah, except if you're at the edge of the edge (but
+then who are your users?)
+
+--
+
+- **Network**: come on... your pick of `fetch()`, P2P WebRTC, QUIC (UDP)
+
+--
+
+- **Real time**: yes, if you write real-time code, same as in native
+
+--
+
+- **Local AI Inference**: yes, and it's getting better fast
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">04 - The promise</span>
+  <h2>What the Web gives you that native can't</h2>
+  <p class="section-note">Putting on my salesman hat</p>
+</div>
+
+---
+
+class: statement
+
+## The Web is not the Internet.
+
+The Internet of Sounds is larger than the Web. But every one of its systems needs a client, and there's one on every device on Earth.
+
+---
+
+class: prose, big
+
+## Distribution
+
+- No installer
+
+--
+
+- No code signing, no notarization, no store review, no EULA
+
+--
+
+- Every OS: Windows, macOS, Linux, ChromeOS, Android, iOS and more
+
+--
+
+- Updates: reload
+
+--
+
+- Your colleague clicks a link at tries your stuff
+
+--
+
+- Your paper's reviewer clicks a link and runs your system
+
+---
+
+class: prose, big
+
+## It works today, it will work tomorrow
+
+- A Web Audio demo from 2013 still runs, today, in every browser
+- A website from 2004 renders the same
+- 32 → 64 bit, `x86-64` → `aarch64`, new OS every year: some native code need
+recompilation and fixes, Web pages didn't notice
+- Your research artefact can outlive your PhD, your grant, and your lab's website
+
+---
+
+class: quote
+
+## Universal motto of people working in Web standards and on browsers:
+
+
+## _Don't break the web_
+
+---
+
+class: prose, big
+
+## UI and accessibility, built in
+
+- HTML and CSS: the most-used UI toolkit ever made, and the most debugged
+- Accessibility by default: use the platform, screen readers just work
+- Most native plugin GUIs are custom-drawn, opaque blob to a screen reader
+- Resist the temptation to go full Canvas2D
+
+---
+
+class: prose, big
+
+## Networking, built in
+
+- **WebRTC**: peer-to-peer, NAT traversal, etc., audio+video and data channels
+- WebSockets, `fetch` streaming, WebSockets, WebTransport, from classical HTTP to TCP to spicy UDP
+- **WebCodecs**: WebRTC media too opinionated? Reimplement it with WebCodecs and DataChannel, dropping down one level lower
+
+.footnote[This conference: "Browser-Native Real-Time Multi-directional Streaming of Third-Order Ambisonics", Ferrari et al. (IWNIA 6). Sixteen channels, in a browser.]
+
+---
+
+class: prose, big
+
+## Portability, tested
+
+- **web-platform-tests**: one test suite, all engines [wpt.fyi](https://wpt.fyi/results/webaudio)
+- **Interop 202x**: browser vendors agree each year on what to fix so everybody can use it
+- **Open source engines**: when it breaks, read why. LLMs make Gecko, Chromium and WebKit approachable. Send a testcase (even better if WPT), send a patch even.
+
+--
+
+<br>
+## Pro audio APIs in interop next time?
+
+---
+
+class: prose, big
+
+## Security, privacy, trust
+
+- Try to break a browser sandbox, **GOOD LUCK!**
+- Extremely strong security model by default, cannot be bypassed
+- Inherent trust
+- We pay cash for exploits, and time from knowning the vuln to a new release is sometimes under 24h
+
+---
+
+class: quote
+
+
+## You don't think about security when you're clicking a link do you?
+
+---
+
+class: quote
+
+## Do you run random people `.exe` ?
+
+---
+
+class: quote
+
+## Are you persistent enough to try to run a python app untouched since 2014 ?
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">05 - Reality check</span>
+  <h2>Who actually uses it?</h2>
+  <p class="section-note">Users, yes. Pros, it depends.</p>
+</div>
+
+---
+
+<div class="content-layout">
+  <header>
+    <p class="eyebrow">Professional adoption in audio related fields</p>
+    <h2 class="slide-heading">Uneven, to say the least</h2>
+  </header>
+  <div class="table-wrap" style="margin-top: 3em">
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Adoption</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Calls, conferencing</td><td>Quasi-ubiquitous</td></tr>
+        <tr><td>Broadcast & podcast</td><td>Real, professional, daily</td></tr>
+        <tr><td>Research</td><td>Popular but far from the norm, <strong>should
+              increase 👀</strong></td></tr>
+        <tr><td>Education</td><td>Quite popular</td></tr>
+        <tr><td>Art</td><td>Somewhat popular, not the norm</td></tr>
+        <tr><td>Music production</td><td>Lots of users. How many records released?</td></tr>
+        <tr><td>Film, post-production</td><td>A few professionals we know of</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+---
+
+class: prose, big
+
+## The biggest pro audio deployment nobody calls pro audio
+
+- Hundreds of millions of people, daily, in a browser tab
+- Echo cancellation, noise suppression, automatic gain control, any DSP via Web Audio
+- Peer-to-peer (or relayed), multichannel, adaptive codecs
+- sub-10ms audio roundtrip (depending on the hardware)
+- And now neural denoisers, voice isolation, running in the page
+
+.footnote[Jitsi Meet: RNNoise in Wasm, in an AudioWorklet (2022). Krisp JS SDK: Wasm in a worker + AudioWorklet. Zoom's Web client: its native media stack compiled to Wasm.]
+
+--
+
+and that's not even talking about the video part!
+
+.footnote[Jitsi Meet: RNNoise in Wasm, in an AudioWorklet (2022). Krisp JS SDK: Wasm in a worker + AudioWorklet. Zoom's Web client: its native media stack compiled to Wasm.]
+
+---
+
+class: prose
+
+## This week, in this building
+
+At least eleven contributions to IS2 2026 run in a browser:
+
+.chips[
+- Anira in WebAssembly (MT 60)
+- Strummin' Gym (MT 75)
+- Third-order Ambisonics streaming (IWNIA 6)
+- Server-side binaural on the Web (IWNIA 82)
+- openDAW (D7)
+- WAM guitar platform (D57)
+- WAM Jam Party, WebXR (D138)
+- WAM Academy (D140)
+- Cascade Delay (D153)
+- Sonification webapps, Chafe (D166)
+- Agentic composition in a browser (PSI 173)
+]
+
+--
+
+and we should celebrate this: accessible, reproducible, runnable research is cool.
+
+---
+
+class: quote
+
+## but something is missing...
+
+---
+
+class: quote
+
+## Can I combine two systems presented today to make something novel?
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">06 - The thesis</span>
+  <h2>Why isn't adoption uniform?</h2>
+  <p class="section-note">it's been 15 years, goddammit</p>
+</div>
+
+---
+
+class: photo
+
+.photo-grid[
+<img src="assets/maxmathews.avif" alt="John Chowning and Max Mathews" />
+
+.col[
+.eyebrow[1960, Bell Labs, MUSIC III]
+
+## The unit generator
+
+"[...] a set of fairly universal building blocks and give the musician both the task and the freedom to put these together into his or her instruments."
+
+.muted[Max Mathews, interviewed by Curtis Roads, Computer Music Journal, 1980]
+]
+]
+
+.footnote[Photo: John Chowning, left, with Max Mathews. Chuck Painter, Stanford News.]
+
+---
+
+class: statement
+
+## The unit generator wasn't a DSP idea. It was an interface idea.
+
+A cool idea composable with another cool idea is better than a cool idea
+
+---
+
+class: big, middle-boxes
+
+<div class="content-layout">
+  <header>
+    <p class="eyebrow">1996: Steinberg VST</p>
+    <h2 class="slide-heading">Success story: the audio plugin</h2>
+    <p class="slide-subtitle">Then AU, AAX, LV2, CLAP. A flywheel that has been spinning for 30 years.</p>
+  </header>
+  <div class="signal-path">
+    <div class="signal-step"><span>Developers</span><strong>ship plugins</strong></div>
+    <div class="signal-step"><span>Hosts</span><strong>load any plugin</strong></div>
+    <div class="signal-step"><span>Users</span><strong>learn, use, depend on, combine</strong></div>
+    <div class="signal-step"><span>Money</span><strong>funds more plugins</strong></div>
+  </div>
+</div>
+
+---
+
+class: quote
+
+## Inertia. INERTIA!
+
+A professional setup is years of presets, sessions, licences and muscle memory
+
+---
+
+class: prose
+
+## Platform vs. ecosystem
+
+.two-col[
+.col[
+### Platform: people working on the web
+
+- Web Audio, AudioWorklet
+- WebAssembly, SIMD, threads
+- WebRTC, WebCodecs
+- WebGPU, WebNN
+- Web MIDI
+]
+.col[
+### Ecosystem: too few people
+
+- A plugin format
+- Parameters, automation, presets, state
+- Host ⇄ plugin negotiation
+- Session interchange
+- Discovery, licensing, a market
+]
+]
+
+---
+
+class: statement
+
+## The `AudioNode` is not a format.
+
+We standardized low level blocks, not interchangeable units for an ecosystem
+
+---
+
+class: quote
+
+## People need to agree on standards
+
+It's standards all the way up
+
+---
+
+class: prose
+
+## Another success story closer to "sounds" than "internet"
+
+[Eurorack](https://doepfer.de/a100_man/a100m_e.htm): 1995, Germany, Dieter
+Doepfer decides to specify a format (based on the
+[Eurocard](https://en.wikipedia.org/wiki/Eurocard_(printed_circuit_board)
+format):
+
+- **a height**: DIN 41494 / IEC 297-3 / IEEE 1001.1 (19" rack, 6u)
+- **a width**: the horizontal pitch, HP, 1/5"
+- **a power supply specification**: +12V and -12V rail, and also +5V
+- **ribbon cables** for power and some CV
+- a spaghetti dish worth of **3.5mm jacks** (and jack sockets)
+- unipolar or bipolar **CV**
+- **1V / octave**
+
+---
+
+class: quote
+
+## Back to computers
+
+Let's not pretend nothing has been started
+
+---
+
+class: prose
+
+.eyebrow[Buffa, Kleimola, Ren, Lebrun, Yi, Campbell, et al.]
+
+## Web Audio Modules: the Web-native answer
+
+- A plugin is a JSON descriptor and an ES module, loaded from a URL
+- `WamNode` is an `AudioNode`, `WamProcessor` is an `AudioWorkletProcessor`
+- Parameters, state save/restore, MIDI, automation, transport, OSC events between plugins
+- The GUI is a DOM element, usually a Web Component (accessible!)
+- Groups sandbox plugins from each other, hosts can nest
+- A community index, Faust and others exports WAM directly
+
+--
+
+<br>
+<strong>In browser engineering circles, we'd say this is "very webby"</strong>
+
+---
+
+class: prose
+
+.eyebrow[github.com/WebCLAP]
+
+## WebCLAP: bring the native ABI to the Web
+
+- A CLAP plugin (the native C ABI) compiled to wasm32
+- Exports `clap_entry`, a function table, `malloc`; shared memory; optional WASI
+- GUI through CLAP's webview extension: the plugin UI is HTML
+- The same binary loads in a browser (AudioWorklet host) or in a native DAW (wclap-bridge, Wasmtime)
+
+--
+
+<br>
+<strong>I don't have a saying, but this is very native-y and attractive for existing vendors</strong>
+
+---
+
+<div class="content-layout">
+  <header>
+    <p class="eyebrow">Two cultures</p>
+    <h2 class="slide-heading">Port the Web to plugins, or plugins to the Web?</h2>
+  </header>
+  <div class="table-wrap" style="margin-top: 1em; margin-bottom: 2em;">
+    <table>
+      <thead>
+        <tr><th></th><th>Web Audio Modules</th><th>WebCLAP</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Level</td><td>Web APIs: AudioNode, AudioWorklet, DOM</td><td>C ABI in linear memory</td></tr>
+        <tr><td>Language</td><td>JavaScript / TypeScript, or Wasm inside</td><td>Anything that compiles CLAP to Wasm</td></tr>
+        <tr><td>GUI</td><td>Web Component</td><td>HTML, via CLAP webview</td></tr>
+        <tr><td>Runs in</td><td>Browsers</td><td>Browsers and native DAWs</td></tr>
+        <tr><td>Best for</td><td>Web-first developers</td><td>The existing plugin industry</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+---
+
+class: quote
+
+## All well and good, but what about more than audio on the local machine
+
+Sensors, network, etc. ?
+
+---
+
+class: quote
+
+# I don't know I'm just an audio standards guy!
+
+---
+
+class: section-slide
+
+<div class="section-layout">
+  <span class="section-number">07 - What now?</span>
+  <h2>Your turn</h2>
+  <p class="section-note">Standards on top of our standards.</p>
+</div>
+
+---
+
+class: quote
+
+> It used to be on us to provide a good platform. <br>
+> It's on the community to write the next standards.
+
+.attribution[Me, just now]
+
+---
+
+class: statement
+
+## Conversely: why would those use cases switch to the Web?
+
+Many won't, and that's fine. The Web wins where distribution, collaboration,
+networking, accessibility and longevity matter.
+
+That's a fair description of the Internet of Sounds.
+
+---
+
+class: prose
+
+## Concretely
+
+- Pick an interchange format: WAM, WebCLAP, a web component, a WASM Component maybe? Ship plugins in it, write the host.
+
+--
+
+- Publish your research as a URL. Make it still run in ten years, share it now.
+
+--
+
+- Measure: native vs. Web, same machine, same DSP, publish the numbers, tell us what matters, we improve.
+
+--
+
+- Tell us what's missing, with a test case. File bugs, read the source, send patches, it's all open, we're all happy to discuss.
+
+--
+
+- Come to the W3C Audio Working Group, Media WG, WebRTC WG, many more WG, the WebAssembly CG, the Bytecode Alliance.
+
+---
+
+class: statement
+
+## 1960: the unit generator at Bell Labs
+
+--
+
+## 2026: a runtime for it on every device on Earth.
+
+---
+
+class: title-slide
+
+<div class="title-layout">
+  <div class="brand-lockup">
+    <img src="assets/firefox-logo.png" alt="" />
+    <img src="assets/firefox-wordmark.svg" alt="Firefox" />
+  </div>
+  <div class="title-copy">
+    <h1>Thank you</h1>
+    <p class="speaker">Paul Adenot - padenot@mozilla.com</p>
+  </div>
+</div>
+    </textarea>
+    <script src="remark-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
+    <script src="assets/cpu-data.js"></script>
+    <script>
+      var slideshow = remark.create({ navigation: { scroll: false } });
+    </script>
+    <script src="charts.js"></script>
+    <script>
+      // irc-typing slide: delete "wtf", type the reply, press Enter. Each show replays it.
+      const ircReply = "yeah I thought it would be cool to support for music lessons, but it's in the standard and well tested, should be fine";
+      let ircRun = 0;
+
+      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+      async function typeIrcReply(slide) {
+        const run = ++ircRun;
+        const typed = slide.querySelector('.irc-typed');
+        slide.querySelectorAll('.irc-sent').forEach(line => line.remove());
+        typed.textContent = 'wtf';
+        await sleep(1000);
+        for (let i = 0; i < 3 && run === ircRun; i++) {
+          typed.textContent = typed.textContent.slice(0, -1);
+          await sleep(180);
+        }
+        for (const ch of ircReply) {
+          if (run !== ircRun) return;
+          typed.textContent += ch;
+          await sleep(35 + Math.random() * 35);
+        }
+        await sleep(500);
+        if (run !== ircRun) return;
+        const nick = Object.assign(document.createElement('span'), { className: 'irc-nick me', textContent: 'padenot' });
+        const msg = Object.assign(document.createElement('span'), { className: 'irc-msg', textContent: ircReply });
+        const line = Object.assign(document.createElement('div'), { className: 'irc-line irc-sent' });
+        line.append(nick, msg);
+        slide.append(line);
+        typed.textContent = '';
+      }
+
+      // The first slide is shown inside remark.create(), before this listener exists.
+      const showIrcTyping = () => {
+        const slide = document.querySelector('.remark-visible .irc-typing');
+        if (slide) typeIrcReply(slide);
+      };
+      slideshow.on('afterShowSlide', showIrcTyping);
+      showIrcTyping();
+    </script>
+  </body>
+</html>
