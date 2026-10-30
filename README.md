@@ -1,6 +1,8 @@
 # Professional audio on the Web, what now?
 
-Slides for my talk “Professional audio on the Web, what now?”
+Slides for my talk “Professional audio on the Web, what now?” given on the 2026-10-29 in Cannes, France for the IEEE International Symposium on the Internet of Sounds (IS2) 2026.
+
+https://internetofsounds2026.ieee-internetofsounds.org/
 
 ## View the slides
 
